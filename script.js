@@ -98,6 +98,7 @@ class piece {
     }
     //detects if moving further would cause a collision
     collision(){
+        //take care of vertical collision
         for(let block of this.position){
             let code = ((block[1] * 10) + block[0]) +10;
             for(let block of gamestate){
@@ -107,6 +108,26 @@ class piece {
             }
         }
         return false;
+    }
+    canMove(dir){
+        let code;
+        for(let block of this.position){
+            if(dir == "left" && block[0] > 0){
+                code = ((block[1] *10) + (block[0] - 1));
+            }
+            else if (dir == "right" && block[0] < 9){
+                code = ((block[1] * 10 ) + (block[0]+1));
+            }
+            else{
+                return false;
+            }
+            for(let block of gamestate){
+                if(block.code == code){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }; 
 
@@ -275,13 +296,13 @@ function shift(e){
     switch (code) {
         //left
         case 37: 
-            if(curPiece.left() > 0){
+            if((curPiece.left() > 0) && curPiece.canMove("left")){
                 curPiece.clear(); curPiece.moveX(-1); drawBoard(); 
             }
             break;
         //right
         case 39: 
-            if(curPiece.right() < 9){
+            if((curPiece.right() < 9) && curPiece.canMove("right")){
                 curPiece.clear(); curPiece.moveX(1); drawBoard(); 
             }
             break;
@@ -292,6 +313,7 @@ function shift(e){
             break;
         }
 }
+
 
 function randomPiece(){
     let arr = ["I", "J", "L", "O", "S", "T", "Z"];
