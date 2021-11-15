@@ -1,11 +1,11 @@
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
+let message = document.getElementById("message");
 const boxSize = 38;
 const width = boxSize * 10;
 const height = boxSize * 20;
 canvas.width = width;
 canvas.height = height;
-const pieceMap = new Map();
 const colorMap = new Map();
 let drop;
 //stores the current pieces on the board in code
@@ -15,15 +15,15 @@ let curPiece;
 function getPosition(shape){
     switch (shape){
         case "I":
-            return [[3,-2],[1,-2],[2,-2],[0,-2]]; break;
+            return [[2,-1],[1,-1],[3,-1],[0,-1]]; break;
         case "J":
-            return [[0,-1],[0,-2],[1,-1],[2,-1]]; break;
+            return [[1,-1],[0,-2],[0,-1],[2,-1]]; break;
         case "L":
-            return [[2,-1],[0,-1],[1,-1],[2,-2]]; break;
+            return [[1,-1],[0,-1],[2,-1],[2,-2]]; break;
         case "O":
-            return [[0,-1],[0,-2],[1,-2],[1,-1]]; break;
+            return [[1,-2],[0,-2],[0,-1],[1,-1]]; break;
         case "S": 
-            return [[0,-1],[1,-2],[1,-1],[2,-2]]; break;
+            return [[1,-1],[1,-2],[0,-1],[2,-2]]; break;
         case "T":
             return [[1,-1],[0,-1],[1,-2],[2,-1]]; break;
         case "Z":
@@ -41,7 +41,7 @@ colorMap.set("Z", "DB381E");
 
 //pieces class
 class piece {
-    constructor(type){
+    constructor(type, center){
         this.position = getPosition(type);
         this.color = colorMap.get(type);
     }
@@ -109,6 +109,7 @@ class piece {
         }
         return false;
     }
+    //horizontal collision
     canMove(dir){
         let code;
         for(let block of this.position){
@@ -128,6 +129,21 @@ class piece {
             }
         }
         return true;
+    }
+    //rotate :)
+    rotate(){
+        let mid = this.position[0];
+        let a = mid[0];
+        let b = mid[1];
+        //rotate everything except the middle point;
+        for(let i = 1; i<4; i++){
+            let newx = (-1 * this.position[i][1]) + a + b;
+            let newy = (this.position[i][0] - a + b);
+            console.log("one block");
+            this.clear();
+            this.position[i][0] = newx;
+            this.position[i][1] = newy;
+        } 
     }
 }; 
 
@@ -163,7 +179,6 @@ function drawGrid()
 //determines when a block cannot move futher
 function endOfGrid(){
     if(curPiece.collision()){
-        console.log("collide");
         return true;
     }
     if(curPiece.low() == 19){
@@ -191,7 +206,6 @@ function drawBoard()
 function moveCurrent(){
     //handle event 
     if(endOfGrid()){ 
-        console.log("endgame");
         handleEnd();
         return;
     }
@@ -229,7 +243,7 @@ function handleEnd(){
     let test = new piece(randomPiece());
     if(test.collision()){
         clearInterval(drop);
-        console.log("GAME OVER");
+        message.innerText = "your dumbass actually lost?";
         test = null;
         return;
     }
@@ -253,11 +267,9 @@ function drawState(){
 
 function handleScore(){
     let deleteRows = [];
-    console.log(gamestate);
     //check if there is a full row in gamestate
     for(let i = 0; i < 20; i++){
         if(contains(i)){ deleteRows.push(i); }
-        console.log(contains(i));
     }
     //deletes the rows and moves the other blocks down
     for(let row of deleteRows){
@@ -293,6 +305,7 @@ function contains(row){
 //handle keyevents
 function shift(e){
     let code = e.keyCode;
+    console.log(code);
     switch (code) {
         //left
         case 37: 
@@ -311,6 +324,12 @@ function shift(e){
                 moveCurrent();
             }
             break;
+        //f rotate right
+        case 70:
+            curPiece.rotate();
+            break;
+        //d
+        //case 68:
         }
 }
 
