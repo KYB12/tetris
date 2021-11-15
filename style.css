@@ -1,6 +1,18 @@
+body {
+    background-color: lightblue;
+}
+#game{
+    display:flex;
+}
 #canvas
 {
     border: 1px solid black;
-    margin-left: 20%;
-    display: block;
+    margin: 0 25px 0 auto;
+}
+#message{
+    margin: 0 auto 0 25px;
+}
+#title{
+    color: #364DE2;
+    text-align: center;
 }
