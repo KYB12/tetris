@@ -144,6 +144,30 @@ class piece {
             this.position[i][0] = newx;
             this.position[i][1] = newy;
         } 
+        this.draw();
+        drawState();
+        drawGrid();
+    }
+    canRotate(){
+        let mid = this.position[0];
+        let a = mid[0];
+        let b = mid[1];
+        for(let i = 1; i<4; i++){
+            let newx = (-1 * this.position[i][1]) + a + b 
+            let newy = this.position[i][0] - a + b
+            if(newx < 0 || newx > 9 ){
+                return false;
+            }
+            if(newy < 0 || newy > 19){
+                return false;
+            }
+            for(let block of gamestate){
+                if(newx == block.code%10 && newy == Math.floor(block.code/10)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }; 
 
@@ -326,7 +350,9 @@ function shift(e){
             break;
         //f rotate right
         case 70:
-            curPiece.rotate();
+            if(curPiece.canRotate()){
+                curPiece.rotate();
+            }
             break;
         //d
         //case 68:
