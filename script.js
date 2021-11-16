@@ -185,6 +185,34 @@ class BlockPiece{
     }
 }
 
+//drop the piece immediately to the bottom
+//filter gamestate by x values needed and find the highest(lowest y) point
+function spacebar(){
+    let xvals = []
+    let yvals = []
+    for(let block of curPiece.position){
+        xvals.push(block[0]);
+    }
+    for(let x of xvals){
+        for(let piece of gamestate){
+            if(piece.code%10 == x){
+                yvals.push(Math.floor(piece.code/10));
+            }
+        }
+    }
+    let low = Math.min(...yvals);
+    curPiece.clear();
+    if(yvals.length == 0){
+        curPiece.moveY(19-curPiece.low());
+    }
+    else{
+        curPiece.moveY((low-1) - curPiece.low());
+    }
+    curPiece.draw();
+    drawState();
+    drawGrid();
+}
+
 //draw the grid
 function drawGrid()
     {
@@ -354,9 +382,12 @@ function shift(e){
                 curPiece.rotate();
             }
             break;
-        //d
-        //case 68:
+        //drop
+        case 32:
+            spacebar();
         }
+        //d rotate left
+        //case 68:
 }
 
 
