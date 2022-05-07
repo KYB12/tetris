@@ -295,7 +295,7 @@ function handleEnd(){
     let test = new piece(randomPiece());
     if(test.collision()){
         clearInterval(drop);
-        message.innerText = "your dumbass actually lost?";
+        message.innerText = "GG :/";
         test = null;
         return;
     }
